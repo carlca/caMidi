@@ -1,5 +1,7 @@
 unit caMidi;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
