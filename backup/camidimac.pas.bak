@@ -10,10 +10,7 @@ uses
   {$LINKFRAMEWORK CoreMIDI}
   MacOsAll,
   CocoaAll,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  {$ENDIF}
-  {$IFDEF WINDOWS}
+  {$ELSE}
   {$ENDIF}
   caHelper;
 

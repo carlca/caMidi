@@ -13,11 +13,11 @@ uses
   {$IFDEF DARWIN}
   caMidiMac;
   {$ENDIF}
-  {$IFDEF LINUX}
-  caMidiLinux;
-  {$ENDIF}
   {$IFDEF WINDOWS}
   caMidiWin;
+  {$ENDIF}
+  {$IFDEF LINUX}
+  caMidiLinux;
   {$ENDIF}
 
 initialization
