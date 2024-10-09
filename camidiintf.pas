@@ -8,8 +8,8 @@ uses
 type
   IcaMidiInterface = interface
     procedure GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings);
-    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings);
+    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
+    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;
 
 var

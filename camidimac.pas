@@ -29,8 +29,8 @@ type
     procedure SendMidiPacket(OutputPort: longword; Device: MIDIEndpointRef; Packet: MIDIPacket; Errors: TStrings);
   protected
     procedure GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings);
-    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings);
+    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
+    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;
 
 implementation
@@ -63,7 +63,8 @@ begin
     Stat := MIDIClientCreate(CFSTR('MIDI CLIENT'), nil, nil, FMidiClient);
     if (Stat <> noErr) then
     begin
-      Errors.Add('Error creating MIDI client: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
+      if Assigned(Errors) then
+        Errors.Add('Error creating MIDI client: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
       FMidiClient := 0;
     end;
   end;
@@ -79,7 +80,8 @@ begin
     Stat := MIDIOutputPortCreate(GetMidiClient(Errors), CFSTR('Output'), FOutputPort);
     if Stat <> noErr then
     begin
-      Errors.Add('Error creating MIDI output port: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
+      if Assigned(Errors) then
+        Errors.Add('Error creating MIDI output port: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
       FOutputPort := 0;
     end;
   end;
@@ -123,7 +125,10 @@ begin
   PacketList.packet[0] := Packet;
   Stat := MIDISend(OutputPort, Device, PacketList);
   if Stat <> noErr then
-    Errors.Add('Error sending MIDI message: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
+  begin
+    if Assigned(Errors) then
+      Errors.Add('Error sending MIDI message: ' + GetMacOSStatusErrorString(Stat) + '  ' + GetMacOSStatusCommentString(Stat));
+  end;
 end;
 
 procedure TcaMidiMac.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings);
@@ -144,7 +149,10 @@ begin
     SendMidiPacket(GetOutputPort(Errors), Device, Packet, Errors);
   end
   else
-    Errors.Add('No MIDI Destination available');
+  begin
+    if Assigned(Errors) then
+      Errors.Add('No MIDI Destination available');
+  end;
 end;
 
 procedure TcaMidiMac.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings);
@@ -164,7 +172,10 @@ begin
     SendMidiPacket(GetOutputPort(Errors), Device, Packet, Errors);
   end
   else
-    Errors.Add('No MIDI Destination available');
+  begin
+    if Assigned(Errors) then
+      Errors.Add('No MIDI Destination available');
+  end;
 end;
 
 end.
