@@ -7,7 +7,7 @@ uses
 
 type
   IcaMidiInterface = interface
-    procedure GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
+    procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
     procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
     procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;

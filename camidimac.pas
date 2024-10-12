@@ -28,7 +28,7 @@ type
     function SelectDevice(Index: integer): MIDIEndpointRef;
     procedure SendMidiPacket(OutputPort: longword; Device: MIDIEndpointRef; Packet: MIDIPacket; Errors: TStrings);
   protected
-    procedure GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
+    procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
     procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
     procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;
@@ -88,7 +88,7 @@ begin
   Result := FOutputPort;
 end;
 
-procedure TcaMidiMac.GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
+procedure TcaMidiMac.GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
 var
   Count, Index: integer;
   Source: MIDIEndpointRef;
