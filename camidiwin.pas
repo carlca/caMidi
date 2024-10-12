@@ -20,6 +20,10 @@ uses
 type
   TcaMidiWin = class(TInterfacedObject, IcaMidiInterface)
   private
+    // ChatGPT4o code
+    procedure SendMIDIMessage;
+    procedure SendPGMMessage;
+    // live code
     procedure GetInputDevices(Devices, Errors: TStrings);
     procedure GetOutputDevices(Devices, Errors: TStrings);
   protected
@@ -31,6 +35,79 @@ type
 implementation
 
 // private methods
+
+procedure TcaMidiWin.SendMIDIMessage;
+const
+  MIDI_CONTROL_CHANGE = $B0; // Control Change message type
+  MIDI_CC0 = 0;              // Controller number for CC0
+  MIDI_CHANNEL = 0;          // MIDI channel (0-15, where 0 is channel 1)
+  MIDI_VALUE = 127;          // Value to send (0-127)
+var
+  MidiOutHandle: HMIDIOUT;
+  midiMessage: DWORD;
+  result: MMRESULT;
+begin
+  // Open the first MIDI output device
+  result := midiOutOpen(@MidiOutHandle, 0, 0, 0, CALLBACK_NULL);
+  if result <> MMSYSERR_NOERROR then
+  begin
+    writeln('Failed to open MIDI output device.');
+    halt(1);
+  end;
+
+  // Construct the MIDI message
+  midiMessage := MIDI_CONTROL_CHANGE or MIDI_CHANNEL or (MIDI_CC0 shl 8) or (MIDI_VALUE shl 16);
+
+  // Send the MIDI message
+  result := midiOutShortMsg(MidiOutHandle, midiMessage);
+  if result <> MMSYSERR_NOERROR then
+  begin
+    writeln('Failed to send MIDI message.');
+    midiOutClose(MidiOutHandle);
+    halt(1);
+  end;
+
+  writeln('MIDI message sent successfully.');
+
+  // Close the MIDI output device
+  midiOutClose(MidiOutHandle);
+end;
+
+procedure TcaMidiWin.SendPGMMessage;
+const
+  MIDI_PROGRAM_CHANGE = $C0; // Program Change message type
+  MIDI_CHANNEL = 0;          // MIDI channel (0-15, where 0 is channel 1)
+  PROGRAM_NUMBER = 10;       // Program number to send (0-127)
+var
+  MidiOutHandle: HMIDIOUT;
+  midiMessage: DWORD;
+  result: MMRESULT;
+begin
+  // Open the first MIDI output device
+  result := midiOutOpen(@MidiOutHandle, 0, 0, 0, CALLBACK_NULL);
+  if result <> MMSYSERR_NOERROR then
+  begin
+    writeln('Failed to open MIDI output device.');
+    halt(1);
+  end;
+
+  // Construct the MIDI message
+  midiMessage := MIDI_PROGRAM_CHANGE or MIDI_CHANNEL or (PROGRAM_NUMBER shl 8);
+
+  // Send the MIDI message
+  result := midiOutShortMsg(MidiOutHandle, midiMessage);
+  if result <> MMSYSERR_NOERROR then
+  begin
+    writeln('Failed to send MIDI message.');
+    midiOutClose(MidiOutHandle);
+    halt(1);
+  end;
+
+  writeln('Program Change message sent successfully.');
+
+  // Close the MIDI output device
+  midiOutClose(MidiOutHandle);
+end;
 
 procedure TcaMidiWin.GetInputDevices(Devices, Errors: TStrings);
 begin
