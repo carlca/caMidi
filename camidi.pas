@@ -25,6 +25,7 @@ initialization
   Midi := TcaMidiMac.Create;
   {$ENDIF}
   {$IFDEF WINDOWS}
+  Midi := TcaMidiWin.Create;
   {$ENDIF}
   {$IFDEF LINUX}
   {$ENDIF}
