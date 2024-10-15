@@ -7,9 +7,9 @@ uses
 
 type
   IcaMidiInterface = interface
+    function SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
+    function SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
     procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
-    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;
 
 var

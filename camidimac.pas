@@ -28,9 +28,9 @@ type
     function SelectDevice(Index: integer): MIDIEndpointRef;
     procedure SendMidiPacket(OutputPort: longword; Device: MIDIEndpointRef; Packet: MIDIPacket; Errors: TStrings);
   protected
+    function SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
+    function SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
     procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
-    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
   end;
 
 implementation
@@ -131,11 +131,12 @@ begin
   end;
 end;
 
-procedure TcaMidiMac.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings);
+function TcaMidiMac.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings): boolean;
 var
   Device: MIDIEndpointRef;
   Packet: MIDIPacket;
 begin
+  Result := True;
   Device := SelectDevice(DeviceIndex);
   if Device <> 0 then
   begin
@@ -150,16 +151,18 @@ begin
   end
   else
   begin
+    Result := False;
     if Assigned(Errors) then
       Errors.Add('No MIDI Destination available');
   end;
 end;
 
-procedure TcaMidiMac.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings);
+function TcaMidiMac.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings): boolean;
 var
   Device: MIDIEndpointRef;
   Packet: MIDIPacket;
 begin
+  Result := True;
   Device := SelectDevice(DeviceIndex);
   if Device <> 0 then
   begin
@@ -173,6 +176,7 @@ begin
   end
   else
   begin
+    Result := False;
     if Assigned(Errors) then
       Errors.Add('No MIDI Destination available');
   end;

@@ -27,9 +27,9 @@ type
     procedure GetOutputDevices(Devices, Errors: TStrings);
     function OpenMidiOutDevice(var MidiOutHandle: HMIDIOUT; var Errors: TStrings; var mResult: MMRESULT; const DeviceIndex: byte): boolean;
   protected
+    function SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
+    function SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
     procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: byte; Errors: TStrings = nil);
-    procedure SendPGM(DeviceIndex, Channel, PGM: byte; Errors: TStrings = nil);
   end;
 
 const
@@ -58,8 +58,7 @@ begin
   DeviceCount := midiOutGetNumDevs;
   for Index := 0 to DeviceCount.Pred do
   begin
-    if midiOutGetDevCaps(Index, @midiOutCaps, SizeOf(midiOutCaps)) =
-      MMSYSERR_NOERROR then
+    if midiOutGetDevCaps(Index, @midiOutCaps, SizeOf(midiOutCaps)) = MMSYSERR_NOERROR then
       Devices.Add(midiOutCaps.szPname)
     else
     begin
@@ -80,8 +79,7 @@ begin
   end;
 end;
 
-function TcaMidiWin.OpenMidiOutDevice(var MidiOutHandle:HMIDIOUT;var Errors:
-  TStrings;var mResult:MMRESULT;const DeviceIndex:byte):boolean;
+function TcaMidiWin.OpenMidiOutDevice(var MidiOutHandle: HMIDIOUT; var Errors: TStrings; var mResult: MMRESULT; const DeviceIndex: byte): boolean;
 begin
   mResult := MidiOutOpen(@MidiOutHandle, DeviceIndex, 0, 0, CALLBACK_NULL);
   Result := mResult = MMSYSERR_NOERROR;
@@ -89,21 +87,21 @@ begin
     Errors.Add(Format('Failed to open PGM MIDI output device: %d', [DeviceIndex]));
 end;
 
-procedure TcaMidiWin.SendCC(DeviceIndex, Channel, CC: byte; Errors: TStrings);
+function TcaMidiWin.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings): boolean;
 var
   MidiOutHandle: HMIDIOUT;
   MidiMessage: DWORD;
-  Result: MMRESULT;
+  mResult: MMRESULT;
 
   procedure SendCCInner;
   begin
     // open the MIDI output device
-    if OpenMidiOutDevice(MidiOutHandle, Errors, Result, DeviceIndex) then
+    if OpenMidiOutDevice(MidiOutHandle, Errors, mResult, DeviceIndex) then
     begin
       MidiMessage := MIDI_CONTROL_CHANGE or Channel or (MIDI_CC0 shl 8) or (CC shl 16);
       // send the MIDI message
-      Result := MidiOutShortMsg(MidiOutHandle, MidiMessage);
-      if Result <> MMSYSERR_NOERROR then
+      mResult := MidiOutShortMsg(MidiOutHandle, MidiMessage);
+      if mResult <> MMSYSERR_NOERROR then
       begin
         Errors.Add(Format('Failed to send CC MIDI message: %d', [MidiMessage]));
         Exit;
@@ -114,29 +112,31 @@ var
   end;
 
 begin
+  Result := True;
   try
     SendCCInner;
   except
+    Result := False;
     Sleep(1000);
     SendCCInner;
   end;
 end;
 
-procedure TcaMidiWin.SendPGM(DeviceIndex, Channel, PGM: byte; Errors: TStrings);
+function TcaMidiWin.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings): boolean;
 var
   MidiOutHandle: HMIDIOUT;
   MidiMessage: DWORD;
-  Result: MMRESULT;
+  mResult: MMRESULT;
 
   procedure SendPGMInner;
   begin
-    if OpenMidiOutDevice(MidiOutHandle, Errors, Result, DeviceIndex) then
+    if OpenMidiOutDevice(MidiOutHandle, Errors, mResult, DeviceIndex) then
     begin
       // build the MIDI message
       MidiMessage := MIDI_PROGRAM_CHANGE or Channel or (PGM shl 8);
       // send the MIDI message
-      Result := MidiOutShortMsg(MidiOutHandle, MidiMessage);
-      if Result <> MMSYSERR_NOERROR then
+      mResult := MidiOutShortMsg(MidiOutHandle, MidiMessage);
+      if mResult <> MMSYSERR_NOERROR then
       begin
         Errors.Add(Format('Failed to send MIDI message: %d', [MidiMessage]));
         Exit;
@@ -147,9 +147,11 @@ var
   end;
 
 begin
+  Result := True;
   try
     SendPGMInner;
   except
+    Result := False;
     Sleep(1000);
     SendPGMInner;
   end;
