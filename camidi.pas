@@ -24,10 +24,11 @@ initialization
   {$IFDEF DARWIN}
   Midi := TcaMidiMac.Create;
   {$ENDIF}
+  {$IFDEF LINUX}
+  Midi := TcaMidiLinux.Create;
+  {$ENDIF}
   {$IFDEF WINDOWS}
   Midi := TcaMidiWin.Create;
-  {$ENDIF}
-  {$IFDEF LINUX}
   {$ENDIF}
 
 finalization

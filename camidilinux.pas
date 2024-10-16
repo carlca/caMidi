@@ -18,8 +18,26 @@ uses
 type
   TcaMidiLinux = class(TInterfacedObject, IcaMidiInterface)
   protected
-    procedure GetDevices(InOut: TcaMidiInOut; Devices: TStrings);
-    procedure SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil);
-    procedure SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil);
+    function SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
+    function SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
+    procedure GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
   end;
+
+implementation
+
+function TcaMidiLinux.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
+begin
+  Result := True;
+end;
+
+function TcaMidiLinux.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
+begin
+  Result := True;
+end;
+
+procedure TcaMidiLinux.GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
+begin
+end;
+
+end.
 
