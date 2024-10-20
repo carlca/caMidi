@@ -95,6 +95,7 @@ var
   PDevName: CFStringRef;
   DevName: string;
 begin
+  PDevName := nil;
   Devices.Clear;
   Count := specialize IfThen<integer>(InOut = ioIn, MIDIGetNumberOfSources, MIDIGetNumberOfDestinations);
   if Count > 0 then
