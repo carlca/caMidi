@@ -27,12 +27,12 @@ implementation
 
 function TcaMidiLinux.SendCC(DeviceIndex, Channel, CC: Byte; Errors: TStrings = nil): boolean;
 begin
-  Result := True;
+  Result := true;
 end;
 
 function TcaMidiLinux.SendPGM(DeviceIndex, Channel, PGM: Byte; Errors: TStrings = nil): boolean;
 begin
-  Result := True;
+  Result := true;
 end;
 
 procedure TcaMidiLinux.GetDevices(InOut: TcaMidiInOut; Devices, Errors: TStrings);
