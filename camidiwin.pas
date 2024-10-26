@@ -36,7 +36,6 @@ const
   MIDI_CONTROL_CHANGE = $B0;  // Control Change message type
   MIDI_CC0 = 0;    // Controller number for CC0
   MIDI_CHANNEL = 0;    // MIDI channel (0-15, where 0 is channel 1)
-  MIDI_VALUE = 127;  // Value to send (0-127)
   MIDI_PROGRAM_CHANGE = $C0;  // Program Change message type
   PROGRAM_NUMBER = 10;   // Program number to send (0-127)
 
@@ -46,7 +45,6 @@ implementation
 
 procedure TcaMidiWin.GetInputDevices(Devices, Errors: TStrings);
 begin
-
 end;
 
 procedure TcaMidiWin.GetOutputDevices(Devices, Errors: TStrings);
